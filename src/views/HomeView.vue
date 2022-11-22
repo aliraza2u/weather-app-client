@@ -1,5 +1,24 @@
-<script setup>
-// import TheWelcome from '../components/TheWelcome.vue'
+<script>
+import axios from "axios";
+export default {
+    name: "HomeView",
+    data() {
+        return {
+            value: null,
+            list: []
+        }
+    },
+    methods: {
+        handleClick() {
+            console.log("value--------", this.value);
+        },
+        getCurrentLocation() { }
+    },
+    async mounted() {
+        let result = await axios.get(`http://localhost:4000/forcast?=lahore&latitude=44.34&longitude=10.99`)
+        this.list = result.data
+    }
+}
 </script>
 
 <template>
@@ -7,8 +26,9 @@
         <div class="weatherWrapper">
             <h1 class="heading">Weather Forcast</h1>
             <div class="searchWrapper">
-                <input type="search" placeholder="Search By City Name" />
-                <img src="../assets/location.png" />
+                <input v-model="value" type="search" placeholder="Search By City Name" />
+                <button v-on:click="handleClick">Search</button>
+                <img src="../assets/location.png" v-on:click="getCurrentLocation" />
             </div>
         </div>
     </main>
@@ -55,6 +75,22 @@
     border-radius: 4px;
     font-size: 16px;
     font-weight: 600;
+}
+
+.searchWrapper button {
+    height: 5vh;
+    border: none;
+    width: 10%;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #3d8ac9;
+    color: #fff;
+    font-weight: 600;
+}
+
+.searchWrapper button:hover {
+    background-color: #fff;
+    color: #3d8ac9;
 }
 
 .searchWrapper img {
