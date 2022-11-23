@@ -39,17 +39,18 @@ export default {
                 </div>
                 <p>{{ date }} | {{ time }}</p>
                 <div class="currentWeather">
-                    <h1>Lahore, Pk</h1>
+                    <h1>{{ list?.location?.name || "Loading..." }} , {{ list?.location?.country }}</h1>
                     <div class="weather">
                         <div class="status">
-                            <img src="" alt="icon" />
-                            <p>Clear</p>
+                            <img
+                                :src="`http://openweathermap.org/img/wn/${list?.weatherResult?.[0]?.weather?.[0]?.icon}@2x.png`" />
+                            <p>{{list?.weatherResult?.[0]?.weather?.[0]?.main}}</p>
                         </div>
-                        <h2>15.82 ℃</h2>
+                        <h2>{{ list?.weatherResult?.[0]?.main?.temp || 0 }} ℃</h2>
                         <div class="temperature">
-                            <p>Min Temp: 15.32</p>
-                            <p>Max Temp:15.82</p>
-                            <p>Humidity: 22%</p>
+                            <p>Min Temp: {{ list?.weatherResult?.[0]?.main?.temp_min || 0 }} ℃</p>
+                            <p>Max Temp: {{ list?.weatherResult?.[0]?.main?.temp_max || 0 }} ℃</p>
+                            <p>Humidity: {{ list?.weatherResult?.[0]?.main?.humidity || 0 }} %</p>
                         </div>
                     </div>
                 </div>
@@ -174,6 +175,7 @@ export default {
 .currentWeather .weather .status p {
     color: #fff;
     font-weight: 600;
+    padding: 0;
 }
 
 .currentWeather .weather .temperature p {
