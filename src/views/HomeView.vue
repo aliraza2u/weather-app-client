@@ -6,6 +6,8 @@ export default {
     components: { ForcastCard },
     data() {
         return {
+            latitude: '',
+            longitude: '',
             value: null,
             list: [],
             date: new Date().toDateString(),
@@ -16,13 +18,32 @@ export default {
         handleClick() {
             console.log("value--------", this.value);
         },
-        getCurrentLocation() { }
-    },
-    async mounted() {
-        let result = await axios.get(`http://localhost:4000/forcast?=lahoref&latitude=44.34&longitude=10.99`)
-        this.list = result.data
-    }
 
+        getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    this.latitude = position.coords.latitude;
+                    this.longitude = position.coords.longitude;
+
+                });
+            }
+            console.log("location----------------", this.latitude, this.longitude);
+
+
+        }
+    },
+
+
+    async mounted() {
+        console.log("mount----------------", this.latitude, this.longitude);
+
+        let result = await axios.get(`http://localhost:4000/forcast?city=lahore`);
+        // let result = await axios.get(`http://localhost:4000/forcast?=lahoref&latitude=44.34&longitude=10.99`);
+        this.list = result.data;
+    },
+    created() {
+        console.log("created location chagne-----------------", this.latitude, this.longitude);
+    },
 
 }
 </script>
@@ -44,7 +65,7 @@ export default {
                         <div class="status">
                             <img
                                 :src="`http://openweathermap.org/img/wn/${list?.weatherResult?.[0]?.weather?.[0]?.icon}@2x.png`" />
-                            <p>{{list?.weatherResult?.[0]?.weather?.[0]?.main}}</p>
+                            <p>{{ list?.weatherResult?.[0]?.weather?.[0]?.main }}</p>
                         </div>
                         <h2>{{ list?.weatherResult?.[0]?.main?.temp || 0 }} ℃</h2>
                         <div class="temperature">
@@ -56,7 +77,11 @@ export default {
                 </div>
             </div>
             <div class="forcastWrapper">
-                <ForcastCard />
+                <div class="cardOutline" v-for="item in list.weatherResult"
+                    :key="list?.weatherResult?.[0]?.main?.temp_min">
+
+                    <ForcastCard :item="item" />
+                </div>
             </div>
         </div>
     </main>
@@ -188,5 +213,19 @@ export default {
     padding-left: 2rem;
     padding-right: 2rem;
     padding-bottom: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.cardOutline {
+    width: 20%;
+    height: 30vh;
+    box-shadow: 0px 0px 6px #6ec7db;
+    border-radius: 8px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
 }
 </style>
