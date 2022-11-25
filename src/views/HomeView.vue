@@ -6,8 +6,6 @@ export default {
     components: { ForcastCard },
     data() {
         return {
-            latitude: '',
-            longitude: '',
             value: null,
             list: [],
             date: new Date().toDateString(),
@@ -15,36 +13,43 @@ export default {
         }
     },
     methods: {
-        handleClick() {
-            console.log("value--------", this.value);
+        async fetchWeatherData(lat, lon) {
+            const baseURL = 'http://localhost:4000/forcast';
+            try {
+                const result = await axios({
+                    method: "GET",
+                    baseURL,
+                    params: {
+                        city: this.value && this.value,
+                        latitude: lat && lat,
+                        longitude: lon && lon,
+                    },
+                });
+                this.list = result.data;
+
+            } catch (error) {
+                console.log("Error -:", error);
+            }
         },
+
+        handleClick() {
+            this.fetchWeatherData()
+        },
+
 
         getCurrentLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((position) => {
-                    this.latitude = position.coords.latitude;
-                    this.longitude = position.coords.longitude;
-
+                    this.fetchWeatherData(position.coords.latitude, position.coords.longitude);
+                    this.value = '';
                 });
             }
-            console.log("location----------------", this.latitude, this.longitude);
-
-
         }
     },
 
-
     async mounted() {
-        console.log("mount----------------", this.latitude, this.longitude);
-
-        let result = await axios.get(`http://localhost:4000/forcast?city=lahore`);
-        // let result = await axios.get(`http://localhost:4000/forcast?=lahoref&latitude=44.34&longitude=10.99`);
-        this.list = result.data;
+        this.getCurrentLocation();
     },
-    created() {
-        console.log("created location chagne-----------------", this.latitude, this.longitude);
-    },
-
 }
 </script>
 
@@ -60,7 +65,7 @@ export default {
                 </div>
                 <p>{{ date }} | {{ time }}</p>
                 <div class="currentWeather">
-                    <h1>{{ list?.location?.name || "Loading..." }} , {{ list?.location?.country }}</h1>
+                    <h1>{{ list?.location?.name || "Loading" }} , {{ list?.location?.country }}</h1>
                     <div class="weather">
                         <div class="status">
                             <img
