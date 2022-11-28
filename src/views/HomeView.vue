@@ -110,15 +110,12 @@ export default {
 }
 
 .weatherWrapper {
-    width: 70%;
+    width: 100%;
     background: #6ec7db;
     background: radial-gradient(circle, #3d8ac9 0%, #587cbb 63%, #3d8ac9 100%);
-    height: 75vh;
-    border-radius: 8px;
+    height: 100vh;
     padding: 4px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
 
 }
 
@@ -138,14 +135,14 @@ export default {
 
 .searchWrapper {
     margin-top: 1rem;
-    display: flex;
-    gap: 24px;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    place-items: center;;
     margin-left: 2rem;
 }
 
 .searchWrapper input {
-    width: 70%;
+    width: 70vw;
     height: 5vh;
     border: none;
     outline: none;
@@ -155,9 +152,9 @@ export default {
 }
 
 .searchWrapper button {
+    width: 10vw;
     height: 5vh;
     border: none;
-    width: 10%;
     border-radius: 4px;
     cursor: pointer;
     background-color: #3d8ac9;
@@ -171,7 +168,7 @@ export default {
 }
 
 .searchWrapper img {
-    widows: 30px;
+    width: 30px;
     height: 30px;
     object-fit: contain;
     cursor: pointer;
@@ -193,9 +190,10 @@ export default {
 }
 
 .currentWeather .weather {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    place-items: center;
+    column-gap: 30%;
 }
 
 .currentWeather .weather h2 {
@@ -206,9 +204,9 @@ export default {
 }
 
 .currentWeather .weather .status {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    place-items: center;
 }
 
 .currentWeather .weather .status p {
@@ -227,26 +225,24 @@ export default {
     padding-left: 2rem;
     padding-right: 2rem;
     padding-bottom: 1rem;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
 }
 
 .cardOutline {
-    width: 20%;
     height: 30vh;
     box-shadow: 0px 0px 6px #6ec7db;
     border-radius: 8px;
     color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
+    display: grid;
+    place-items: center;
+    width: 230px;
 }
 
 .loadingWrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    place-items: center;
     height: 100%;
 }
 </style>
