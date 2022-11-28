@@ -1,12 +1,15 @@
 <script>
 import axios from "axios";
 import ForcastCard from '../components/ForcastCard.vue';
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 export default {
     name: "HomeView",
-    components: { ForcastCard },
+    components: { ForcastCard, PulseLoader },
     data() {
         return {
             value: null,
+            cityTime: null,
+            loading: false,
             list: [],
             date: new Date().toDateString(),
             time: new Date().toLocaleTimeString('en-Us', { hour: "numeric", minute: "numeric" })
@@ -14,6 +17,7 @@ export default {
     },
     methods: {
         async fetchWeatherData(lat, lon) {
+            this.loading = true;
             const baseURL = 'http://localhost:4000/forcast';
             try {
                 const result = await axios({
@@ -27,9 +31,11 @@ export default {
                 });
                 this.list = result.data;
 
+                // console.log(new Date(1669593600 * 1000 + (18000 * 1000))); // plus //timezone=18000 //time in sec=1669593600
             } catch (error) {
                 console.log("Error -:", error);
             }
+            finally { this.loading = false }
         },
 
         handleClick() {
@@ -63,8 +69,11 @@ export default {
                     <button v-on:click="handleClick">Search</button>
                     <img src="../assets/location.png" v-on:click="getCurrentLocation" />
                 </div>
-                <p>{{ date }} | {{ time }}</p>
-                <div class="currentWeather">
+                <p>{{ date }}</p>
+                <div v-if="loading" class="loadingWrapper">
+                    <PulseLoader color="#fff" />
+                </div>
+                <div v-if="!loading" class="currentWeather">
                     <h1>{{ list?.location?.name || "Loading" }} , {{ list?.location?.country }}</h1>
                     <div class="weather">
                         <div class="status">
@@ -81,7 +90,7 @@ export default {
                     </div>
                 </div>
             </div>
-            <div class="forcastWrapper">
+            <div v-if="!loading" class="forcastWrapper">
                 <div class="cardOutline" v-for="item in list.weatherResult"
                     :key="list?.weatherResult?.[0]?.main?.temp_min">
 
@@ -232,5 +241,12 @@ export default {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+}
+
+.loadingWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 </style>
