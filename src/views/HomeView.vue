@@ -1,10 +1,10 @@
 <script>
 import axios from "axios";
 import ForcastCard from '../components/ForcastCard.vue';
-import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import RingLoader from 'vue-spinner/src/RingLoader.vue'
 export default {
     name: "HomeView",
-    components: { ForcastCard, PulseLoader },
+    components: { ForcastCard, RingLoader },
     data() {
         return {
             value: null,
@@ -71,7 +71,7 @@ export default {
                 </div>
                 <p>{{ date }}</p>
                 <div v-if="loading" class="loadingWrapper">
-                    <PulseLoader color="#fff" />
+                    <RingLoader color="#fff" />
                 </div>
                 <div v-if="!loading" class="currentWeather">
                     <h1>{{ list?.location?.name || "Loading" }} , {{ list?.location?.country }}</h1>
