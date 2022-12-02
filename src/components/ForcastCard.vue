@@ -3,10 +3,13 @@ export default {
     name: 'ForcastCard',
     props: {
         item: Object,
+        daily: Boolean,
+        hourly: Boolean
     },
     data() {
         return {
             today: new Date(this.item.dt_txt).getDay(),
+            hour: new Date(this.item?.dt_txt).getHours(),
             getDay: {
                 0: "Sunday",
                 1: "Monday",
@@ -23,7 +26,8 @@ export default {
 </script>
 
 <template >
-    <p>{{ this.getDay[this.today] }}</p>
+    <p v-if="daily">{{ this.getDay[this.today] }}</p>
+    <p v-if="hourly">{{ this.hour }} {{ (this.hour >= 12 ? "pm" : "am") }}</p>
     <img :src="`http://openweathermap.org/img/wn/${item?.weather?.[0]?.icon}@2x.png`" />
     <p>{{ item?.weather?.[0]?.main }}</p>
     <p>{{ item?.main?.temp || 0 }} ℃</p>

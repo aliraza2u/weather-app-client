@@ -10,27 +10,29 @@ export default {
             value: null,
             cityTime: null,
             loading: false,
+            hourlyForcastLoading: false,
             list: [],
+            hourlyForcast: [],
             date: new Date().toDateString(),
-            time: new Date().toLocaleTimeString('en-Us', { hour: "numeric", minute: "numeric" })
+            time: new Date().toLocaleTimeString('en-Us', { hour: "numeric", minute: "numeric" }),
+            baseURL: 'http://localhost:4000'
         }
     },
     methods: {
         async fetchWeatherData(lat, lon) {
             this.loading = true;
-            const baseURL = 'http://localhost:4000/forcast';
             try {
                 const result = await axios({
                     method: "GET",
-                    baseURL,
+                    baseURL: "http://localhost:4000/forcast",
                     params: {
+
                         city: this.value && this.value,
                         latitude: lat && lat,
                         longitude: lon && lon,
                     },
                 });
                 this.list = result.data;
-
                 // console.log(new Date(1669593600 * 1000 + (18000 * 1000))); // plus //timezone=18000 //time in sec=1669593600
             } catch (error) {
                 console.log("Error -:", error);
@@ -38,8 +40,30 @@ export default {
             finally { this.loading = false }
         },
 
+        async fetchHourlyForcast(lat, lon) {
+            this.hourlyForcastLoading = true;
+            try {
+                const response = await axios({
+                    method: "GET",
+                    baseURL: "http://localhost:4000/hourly-forcast",
+                    params: {
+                        city: this.value && this.value,
+                        latitude: lat && lat,
+                        longitude: lon && lon,
+                        ctn: 5
+                    },
+                });
+                this.hourlyForcast = response.data.hourlyForcast
+                this.hourlyForcast.shift()
+
+            } catch (error) {
+                console.log("Horuly Forcast Error -:", error);
+            }
+            finally { this.hourlyForcastLoading = false }
+        },
         handleClick() {
             this.fetchWeatherData()
+            this.fetchHourlyForcast()
         },
 
 
@@ -47,6 +71,7 @@ export default {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((position) => {
                     this.fetchWeatherData(position.coords.latitude, position.coords.longitude);
+                    this.fetchHourlyForcast(position.coords.latitude, position.coords.longitude);
                     this.value = '';
                 });
             }
@@ -55,6 +80,7 @@ export default {
 
     async mounted() {
         this.getCurrentLocation();
+
     },
 }
 </script>
@@ -74,7 +100,7 @@ export default {
                     <RingLoader color="#fff" />
                 </div>
                 <div v-if="!loading" class="currentWeather">
-                    <h1>{{ list?.location?.name || "Loading" }} , {{ list?.location?.country }}</h1>
+                    <h1>{{ list?.location?.name }} , {{ list?.location?.country }}</h1>
                     <div class="weather">
                         <div class="status">
                             <img
@@ -88,13 +114,17 @@ export default {
                             <p>Humidity: {{ list?.weatherResult?.[0]?.main?.humidity || 0 }} %</p>
                         </div>
                     </div>
+                    <div v-if="!loading" class="hourlyForcastWrapper">
+                        <div v-for="item in hourlyForcast" :key="item.dt" class="cardOutline">
+                            <ForcastCard :item="item" hourly=true />
+                        </div>
+                    </div>
                 </div>
             </div>
             <div v-if="!loading" class="forcastWrapper">
                 <div class="cardOutline" v-for="item in list.weatherResult"
                     :key="list?.weatherResult?.[0]?.main?.temp_min">
-
-                    <ForcastCard :item="item" />
+                    <ForcastCard :item="item" daily=true />
                 </div>
             </div>
         </div>
@@ -137,7 +167,8 @@ export default {
     margin-top: 1rem;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    place-items: center;;
+    place-items: center;
+    ;
     margin-left: 2rem;
 }
 
@@ -149,6 +180,7 @@ export default {
     border-radius: 4px;
     font-size: 16px;
     font-weight: 600;
+    padding: 0 8px;
 }
 
 .searchWrapper button {
@@ -180,6 +212,7 @@ export default {
     margin-left: 2rem;
     margin-right: 2rem;
     padding: 1rem 1rem;
+    height: 48vh;
 
 }
 
@@ -229,20 +262,29 @@ export default {
     grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
 }
+.hourlyForcastWrapper {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 1rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
 
 .cardOutline {
-    height: 30vh;
+    height: 25vh;
     box-shadow: 0px 0px 6px #6ec7db;
     border-radius: 8px;
     color: #fff;
     display: grid;
     place-items: center;
-    width: 230px;
+    width: 210px;
+    margin-top: 1rem;
 }
 
 .loadingWrapper {
     display: grid;
     place-items: center;
-    height: 100%;
+    height: 70%;
 }
 </style>
