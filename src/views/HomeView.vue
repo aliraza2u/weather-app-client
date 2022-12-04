@@ -168,7 +168,6 @@ export default {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     place-items: center;
-    ;
     margin-left: 2rem;
 }
 
@@ -262,6 +261,7 @@ export default {
     grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
 }
+
 .hourlyForcastWrapper {
     padding-left: 2rem;
     padding-right: 2rem;
@@ -286,5 +286,65 @@ export default {
     display: grid;
     place-items: center;
     height: 70%;
+}
+
+@media (max-width: 500px) {
+    .mainWrapper {
+        height: auto;
+
+    }
+
+    .weatherWrapper {
+        min-height: 100vh;
+    }
+
+    .forcastWrapper {
+        width: 340px;
+        overflow-x: scroll;
+        grid-template-rows: repeat(1, 1fr);
+        padding-left: 4px;
+        padding-right: 4px;
+
+    }
+
+    .hourlyForcastWrapper {
+        overflow-x: scroll;
+        grid-template-rows: repeat(1, 1fr);
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .currentWeather {
+        width: 340px;
+        height: 46vh;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 4px;
+
+    }
+
+    .currentWeather .weather .status {
+        /* overflow-x: scroll; */
+        grid-template-rows: repeat(1, 1fr);
+    }
+
+    .temperature {
+        display: none;
+    }
+
+    .searchWrapper {
+        margin-left: 0;
+        width: 350px;
+    }
+
+    .searchWrapper input {
+        width: 50vw;
+        height: 4vh;
+    }
+
+    .searchWrapper button {
+        width: 20vw;
+        height: 4vh;
+    }
 }
 </style>
